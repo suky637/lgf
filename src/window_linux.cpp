@@ -4,6 +4,14 @@ void LGF::LGFWindow::addOnRenderEvent(const std::function<void()>& e) {
     this->drawCalls.push_back(e);
 }
 
+void LGF::LGFWindow::addOnBeforeRenderEvent(const std::function<void()>& e) {
+    this->beforeDrawCalls.push_back(e);
+}
+
+void LGF::LGFWindow::addOnAfterRenderEvent(const std::function<void()>& e) {
+    this->afterDrawCalls.push_back(e);
+}
+
 void LGF::LGFWindow::addOnResizeEvent(const std::function<void()>& e) {
     this->onResizeCalls.push_back(e);
 }
@@ -111,7 +119,13 @@ void LGF::LGFWindow::render() {
     glClear(GL_COLOR_BUFFER_BIT);
 
     // calling render shit
+    for (auto func : this->beforeDrawCalls) {
+        func();
+    }
     for (auto func : this->drawCalls) {
+        func();
+    }
+    for (auto func : this->afterDrawCalls) {
         func();
     }
 

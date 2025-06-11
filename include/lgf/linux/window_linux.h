@@ -20,6 +20,8 @@ namespace LGF {
         void pollEvents();
         void render();
         void addOnRenderEvent(const std::function<void()>& e);
+        void addOnBeforeRenderEvent(const std::function<void()>& e);
+        void addOnAfterRenderEvent(const std::function<void()>& e);
         void addOnResizeEvent(const std::function<void()>& e);
         void setFillColour(const int& r, const int& g, const int& b);
         ~LGFWindow();
@@ -31,7 +33,9 @@ namespace LGF {
         glm::mat4 view;
         private:
         glm::vec3 fillColour;
+        std::vector<std::function<void()>> beforeDrawCalls{};
         std::vector<std::function<void()>> drawCalls{};
+        std::vector<std::function<void()>> afterDrawCalls{};
         std::vector<std::function<void()>> onResizeCalls{};
         Display* display;
         Window root;
