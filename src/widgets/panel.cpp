@@ -56,26 +56,42 @@ void LGF::Widgets::Panel::updatePanel() {
     }
     glm::vec2 _size = size + newSize;
 
-    
-    if (this->anchor == LGF::Widgets::Anchors::CENTRE) {
-        newPos = glm::vec2((float)(window->width) / 2.f + position.x, (float)(window->height) / 2.f + position.y);
-        this->quad.setRect(newPos, glm::vec2(std::max(minSize.x, std::min(_size.x, maxSize.x)), std::max(minSize.y, std::min(_size.y, maxSize.y))));
-    }
-    else if (this->anchor == LGF::Widgets::Anchors::LEFT) {
-        newPos = glm::vec2(std::max(minSize.x, std::min(_size.x, maxSize.x)) / 2.f, (float)(window->height) / 2.f + position.y);
-        this->quad.setRect(newPos, glm::vec2(std::max(minSize.x, std::min(_size.x, maxSize.x)), std::max(minSize.y, std::min(_size.y, maxSize.y))));
-    }
-    else if (this->anchor == LGF::Widgets::Anchors::RIGHT) {
-        newPos = glm::vec2(window->width - std::max(minSize.x, std::min(_size.x, maxSize.x)) / 2.f, (float)(window->height) / 2.f + position.y);
-        this->quad.setRect(newPos, glm::vec2(std::max(minSize.x, std::min(_size.x, maxSize.x)), std::max(minSize.y, std::min(_size.y, maxSize.y))));
-    }
-    else if (this->anchor == LGF::Widgets::Anchors::BOTTOM) {
-        newPos = glm::vec2((float)(window->width) / 2.f + position.x, std::max(minSize.y, std::min(_size.y, maxSize.y)) / 2.f);
-        this->quad.setRect(newPos, glm::vec2(std::max(minSize.x, std::min(_size.x, maxSize.x)), std::max(minSize.y, std::min(_size.y, maxSize.y))));
-    }
-    else if (this->anchor == LGF::Widgets::Anchors::TOP) {
-        newPos = glm::vec2((float)(window->width) / 2.f + position.x, window->height - std::max(minSize.y, std::min(_size.y, maxSize.y)) / 2.f);
-        this->quad.setRect(newPos, glm::vec2(std::max(minSize.x, std::min(_size.x, maxSize.x)), std::max(minSize.y, std::min(_size.y, maxSize.y))));
+    float centre_x = (float)(window->width) / 2.f + position.x;
+    float centre_y = (float)(window->height) / 2.f + position.y;
+    glm::vec2 size_ = glm::vec2(
+        std::max(minSize.x, std::min(_size.x, maxSize.x)), 
+        std::max(minSize.y, std::min(_size.y, maxSize.y))
+    );
+
+    switch (this->anchor)
+    {
+        case LGF::Widgets::Anchors::CENTRE: {
+            newPos = glm::vec2(centre_x, centre_y);
+            this->quad.setRect(newPos, size_);
+            break;
+        }
+        case LGF::Widgets::Anchors::LEFT: {
+            newPos = glm::vec2(size_.x / 2.f, centre_y);
+            this->quad.setRect(newPos, size_);
+            break;
+        }
+        case LGF::Widgets::Anchors::RIGHT: {
+            newPos = glm::vec2(window->width - size_.x / 2.f, centre_y);
+            this->quad.setRect(newPos, size_);
+            break;
+        }
+        case LGF::Widgets::Anchors::BOTTOM: {
+            newPos = glm::vec2(centre_x, size_.y / 2.f);
+            this->quad.setRect(newPos, size_);
+            break;
+        }
+        case LGF::Widgets::Anchors::TOP: {
+            newPos = glm::vec2(centre_x, window->height - size_.y / 2.f);
+            this->quad.setRect(newPos, size_);
+        }
+        default: {
+            break;
+        }
     }
 }
 
