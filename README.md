@@ -18,10 +18,14 @@ Also please copy the shaders folder to your build folder to make it work.
 ```C++
 #include <lgf/window.h>
 #include <lgf/widgets/panel.h>
+#include <lgf/widgets/layout.h>
 
 int main() {
     LGF::LGFWindow window{800, 600, "LGF Window"};
     window.setFillColour(100, 100, 100);
+
+    LGF::Widgets::Layout layout{&window};
+
     LGF::Widgets::Panel panel{&window};
     panel.setAnchor(LGF::Widgets::Anchors::CENTRE);
     panel.setResizeDirection(LGF::Widgets::ResizeDirection::HORIZONTAL | LGF::Widgets::ResizeDirection::VERTICAL);
@@ -30,6 +34,8 @@ int main() {
     panel.setMinimumSize(glm::vec2(100.f));
     panel.setMaximumSize(glm::vec2(600.f));
     panel.setCornerRadius(16.f);
+
+    layout.addChild(&panel);
 
     while (!window.windowShouldClose()) {
         window.pollEvents();
