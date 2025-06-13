@@ -4,11 +4,26 @@ in vec2 fragUV;
 out vec4 fragColor;
 
 uniform vec4 colour;
+uniform vec2 u_boundsPos;
+uniform vec2 u_boundsSize;
 uniform vec2 u_dimensions;
 uniform float u_radius;
 
+uniform mat4 proj;
+uniform mat4 view;
+
 void main()
 {
+    vec2 fragPos = gl_FragCoord.xy;
+
+    vec2 minCorner = u_boundsPos;
+    vec2 maxCorner = u_boundsPos + u_boundsSize;
+
+    if (fragPos.x < minCorner.x || fragPos.x > maxCorner.x ||
+        fragPos.y < minCorner.y || fragPos.y > maxCorner.y) {
+        discard;
+    }
+
     vec2 uv = fragUV;
     vec2 pixelPos = uv * u_dimensions;
     float r = u_radius;
