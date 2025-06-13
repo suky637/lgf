@@ -1,19 +1,7 @@
-#include "lgf/window.h"
+#include "lgf/linux/window_linux.h"
 
-void LGF::LGFWindow::addOnRenderEvent(const std::function<void()>& e) {
-    this->drawCalls.push_back(e);
-}
-
-void LGF::LGFWindow::addOnBeforeRenderEvent(const std::function<void()>& e) {
-    this->beforeDrawCalls.push_back(e);
-}
-
-void LGF::LGFWindow::addOnAfterRenderEvent(const std::function<void()>& e) {
-    this->afterDrawCalls.push_back(e);
-}
-
-void LGF::LGFWindow::addOnResizeEvent(const std::function<void()>& e) {
-    this->onResizeCalls.push_back(e);
+Bounds* LGF::LGFWindow::getBounds() {
+    return &bounds;
 }
 
 LGF::LGFWindow::LGFWindow(size_t width, size_t height, const char* title) {
@@ -53,6 +41,8 @@ LGF::LGFWindow::LGFWindow(size_t width, size_t height, const char* title) {
 
     this->original_width = width;
     this->original_height = height;
+
+    bounds = {glm::vec2(0.f), glm::vec2(width, height)};
 
     XStoreName(display, win, "LGF Test window");
     XMapWindow(display, win);
@@ -99,9 +89,8 @@ void LGF::LGFWindow::pollEvents() {
             height = xev.xconfigure.height;
             glViewport(0, 0, width, height);
             proj = glm::ortho(0.0f, (float)width, 0.0f, (float)height, 0.1f, 100.f);
-            for (auto func : onResizeCalls) {
-                func();
-            }
+            bounds = {glm::vec2(0.f), glm::vec2(width, height)};
+            this->onResize.trigger();
             break;
         case ClientMessage:
             if ((Atom)xev.xclient.data.l[0] == wmDeleteMessage) {
@@ -119,15 +108,9 @@ void LGF::LGFWindow::render() {
     glClear(GL_COLOR_BUFFER_BIT);
 
     // calling render shit
-    for (auto func : this->beforeDrawCalls) {
-        func();
-    }
-    for (auto func : this->drawCalls) {
-        func();
-    }
-    for (auto func : this->afterDrawCalls) {
-        func();
-    }
+    this->onRenderBefore.trigger();
+    this->onRender.trigger();
+    this->onRenderAfter.trigger();
 
     glXSwapBuffers(display, win);
 }

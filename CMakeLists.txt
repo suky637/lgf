@@ -1,12 +1,13 @@
 cmake_minimum_required(VERSION 3.10.0)
 project(lgf VERSION 0.1.0 LANGUAGES C CXX)
 
-add_library(lgf 
-src/window_linux.cpp
-src/window.cpp
+add_library(lgf src/window_linux.cpp
 src/files.cpp
 src/quad.cpp
+src/events.cpp
 src/widgets/panel.cpp
+src/widgets/widget.cpp
+src/widgets/layout.cpp
 )
 
 find_package(X11 REQUIRED)
