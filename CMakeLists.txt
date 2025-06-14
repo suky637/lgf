@@ -8,10 +8,11 @@ src/events.cpp
 src/widgets/panel.cpp
 src/widgets/widget.cpp
 src/widgets/layout.cpp
+src/text.cpp
 )
 
 find_package(X11 REQUIRED)
 find_package(OpenGL REQUIRED)
 
-target_include_directories(lgf PUBLIC include ${X11_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR} ../glad/include ../glm)
-target_link_libraries(lgf PRIVATE ${X11_LIBRARIES} GL glad glm)
+target_include_directories(lgf PUBLIC include ${X11_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR} ../glad/include ../glm ../freetype-2.10.0/include)
+target_link_libraries(lgf PRIVATE ${X11_LIBRARIES} GL glad glm freetype)
