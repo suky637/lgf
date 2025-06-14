@@ -9,6 +9,7 @@ Currently I support:
 Dependancies:
 - glad
 - glm
+- freetype
 
 Please note there is only linux back-ends at the moment, windows back-ends will be developped in later stages of development. Also, it is quite easy to setup windows back-end.
 
