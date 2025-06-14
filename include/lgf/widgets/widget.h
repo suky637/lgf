@@ -15,7 +15,8 @@ namespace LGF {
             void setResizeDirection(int direction);
             void updateBounds(const glm::vec2& pos, const glm::vec2& size);
             void addChild(Widget* child);
-
+            void setActive(bool isActive);
+            void setZOrder(int z_order);
             LGF::Events::OnAddChildEvents onAddChild;
             LGF::Events::OnBoundsResizedEvents onBoundsResized;
             Widget* parent;
@@ -24,7 +25,9 @@ namespace LGF {
             glm::vec2 position;
             LGF::LGFWindow* window;
             LGF::Widgets::Anchors anchor;
+            int z_order = 0;
             int direction;
+            bool enabled = false;
         };
     };
 };

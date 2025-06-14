@@ -42,7 +42,7 @@ LGF::LGFWindow::LGFWindow(size_t width, size_t height, const char* title) {
     this->original_width = width;
     this->original_height = height;
 
-    bounds = {glm::vec2(0.f), glm::vec2(width, height)};
+    bounds = {glm::vec2(width / 2.f, height / 2.f), glm::vec2(width, height)};
 
     XStoreName(display, win, "LGF Test window");
     XMapWindow(display, win);
@@ -59,6 +59,7 @@ LGF::LGFWindow::LGFWindow(size_t width, size_t height, const char* title) {
     running = true;
 
     glEnable(GL_BLEND);
+    glEnable(GL_DEPTH_TEST);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     // Creating matrices
@@ -89,7 +90,7 @@ void LGF::LGFWindow::pollEvents() {
             height = xev.xconfigure.height;
             glViewport(0, 0, width, height);
             proj = glm::ortho(0.0f, (float)width, 0.0f, (float)height, 0.1f, 100.f);
-            bounds = {glm::vec2(0.f), glm::vec2(width, height)};
+            bounds = {glm::vec2(width / 2.f, height / 2.f), glm::vec2(width, height)};
             this->onResize.trigger();
             break;
         case ClientMessage:
@@ -105,7 +106,7 @@ void LGF::LGFWindow::pollEvents() {
 
 void LGF::LGFWindow::render() {
     glClearColor(fillColour.r, fillColour.g, fillColour.b, 1.f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // calling render shit
     this->onRenderBefore.trigger();
