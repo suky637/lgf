@@ -1,6 +1,7 @@
 #pragma once
 
 #include "lgf/widgets/widget.h"
+#include "lgf/events.h"
 
 namespace LGF {
     namespace Widgets {

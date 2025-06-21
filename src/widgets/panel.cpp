@@ -9,27 +9,32 @@ void LGF::Widgets::Panel::setCornerRadius(float radius) {
 }
 
 LGF::Widgets::Panel::Panel(LGF::LGFWindow* window) :
-    quad{LGF::Draw::QuadType::ROUNDED}
+    quad{LGF::Draw::QuadType::ROUNDED},
+    radius(0.f),
+    minSize(glm::vec2(0.f)),
+    maxSize(window->getBounds()->size)
 {
+    this->setZOrder(0);
     this->window = window;
     quad.linkWindow(window);
     this->bounds = {glm::vec2(0.f), glm::vec2(0.f), glm::vec2(0.f)};
-    window->onRender += [&]() {
-        if (!enabled) return;
-        glUseProgram(quad.getShaderID());
-        glm::vec2 rectSize = {
-            glm::length(glm::vec3(this->quad.model[0])),
-            glm::length(glm::vec3(this->quad.model[1]))
-        };
-        glUniform2f(glGetUniformLocation(quad.getShaderID(), "u_dimensions"), rectSize.x, rectSize.y);
-        glUniform2f(glGetUniformLocation(quad.getShaderID(), "u_boundsPos"), this->parent->bounds.position.x, this->parent->bounds.position.y);
-        glUniform2f(glGetUniformLocation(quad.getShaderID(), "u_boundsSize"), this->parent->bounds.size.x, this->parent->bounds.size.y);
-        glUniform1f(glGetUniformLocation(quad.getShaderID(), "u_radius"), radius);
-        quad.render();
-    };
     this->onAddChild += [&]() {
         this->parent->onBoundsResized += [&]() {
             this->updatePanel();
+        };
+        this->parent->onRender += [&]() {
+            if (!enabled) return;
+            glUseProgram(quad.getShaderID());
+            glm::vec2 rectSize = {
+                glm::length(glm::vec3(this->quad.model[0])),
+                glm::length(glm::vec3(this->quad.model[1]))
+            };
+            glUniform2f(glGetUniformLocation(quad.getShaderID(), "u_dimensions"), rectSize.x, rectSize.y);
+            glUniform2f(glGetUniformLocation(quad.getShaderID(), "u_boundsPos"), this->parent->bounds.position.x, this->parent->bounds.position.y);
+            glUniform2f(glGetUniformLocation(quad.getShaderID(), "u_boundsSize"), this->parent->bounds.size.x, this->parent->bounds.size.y);
+            glUniform1f(glGetUniformLocation(quad.getShaderID(), "u_radius"), radius);
+            quad.render();
+            this->onRender.trigger();
         };
     };
     this->anchor = LGF::Widgets::Anchors::CENTRE;
@@ -97,16 +102,19 @@ void LGF::Widgets::Panel::updatePanel() {
             newPos = glm::vec2(centre_x, centre_y + parent->bounds.size.y / 2.f - size_.y / 2.f);
             this->updateBounds(newPos, size_);
             this->quad.setRect(newPos, size_);
+            break;
         }
         case LGF::Widgets::Anchors::TOP_LEFT: {
             newPos = glm::vec2(centre_x - parent->bounds.size.x / 2.f + size_.x / 2.f, centre_y + parent->bounds.size.y / 2.f - size_.y / 2.f);
             this->updateBounds(newPos, size_);
             this->quad.setRect(newPos, size_);
+            break;
         }
         case LGF::Widgets::Anchors::TOP_RIGHT: {
             newPos = glm::vec2(centre_x + parent->bounds.size.x / 2.f - size_.x / 2.f, centre_y + parent->bounds.size.y / 2.f - size_.y / 2.f);
             this->updateBounds(newPos, size_);
             this->quad.setRect(newPos, size_);
+            break;
         }
         case LGF::Widgets::Anchors::BOTTOM_LEFT: {
             newPos = glm::vec2(centre_x - parent->bounds.size.x / 2.f + size_.x / 2.f, centre_y - parent->bounds.size.y / 2.f + size_.y / 2.f);
@@ -139,4 +147,9 @@ void LGF::Widgets::Panel::setRect(const glm::vec2& pos, const glm::vec2& size) {
 
 void LGF::Widgets::Panel::setColour(const int& r, const int& g, const int& b, const int& a) {
     glUniform4f(glGetUniformLocation(quad.getShaderID(), "colour"), r / 255.f, g / 255.f, b / 255.f, a / 255.f);
+}
+
+LGF::Widgets::Panel::~Panel() {
+    this->children.clear();
+    this->quad.~Quad();
 }

@@ -8,6 +8,7 @@ src/events.cpp
 src/widgets/panel.cpp
 src/widgets/widget.cpp
 src/widgets/layout.cpp
+src/widgets/label.cpp
 src/text.cpp
 )
 

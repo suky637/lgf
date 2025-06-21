@@ -28,6 +28,7 @@ void LGF::Draw::Font::init(const char* fontFaceFile, int fontSize, const char* v
             glBindTexture(GL_TEXTURE_2D, textureID);
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, face->glyph->bitmap.width, face->glyph->bitmap.rows, 0, GL_RED, GL_UNSIGNED_BYTE, face->glyph->bitmap.buffer);
 
+            
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -90,13 +91,15 @@ void LGF::Draw::Font::init(const char* fontFaceFile, int fontSize, const char* v
     glAttachShader(shader, fragmentShader);
     glLinkProgram(shader);
 
+    
     glGetProgramiv(shader, GL_LINK_STATUS, &success);
     if(!success) {
         glGetProgramInfoLog(shader, 512, NULL, infoLog);
         std::cout << "ERROR: Failed to link program. message: " << infoLog << "\n";
     }
-
+    
     glUseProgram(shader);
+    glUniform1i(glGetUniformLocation(shader, "text"), 0);
 
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
@@ -153,4 +156,17 @@ LGF::Draw::Font::Font(const char* fontFaceFile, int fontSize, LGF::LGFWindow* wi
 LGF::Draw::Font::Font(const char* fontFaceFile, int fontSize, LGF::LGFWindow* window) {
     this->window = window;
     this->init(fontFaceFile, fontSize, "shaders/text.vert", "shaders/text.frag");
+}
+
+glm::vec2 LGF::Draw::Font::getTextSize(const std::string& text, float scale) {
+    glm::vec2 return_val{0.f};
+    for (const char& c : text) {
+        auto ch = characters[c];
+        return_val.x += (ch.Advance >> 6) * scale;
+        float height = ch.Size.y * scale;
+        if (height > return_val.y) {
+            return_val.y = height;
+        }
+    }
+    return return_val;
 }

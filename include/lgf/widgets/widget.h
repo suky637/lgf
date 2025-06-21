@@ -25,9 +25,10 @@ namespace LGF {
             glm::vec2 position;
             LGF::LGFWindow* window;
             LGF::Widgets::Anchors anchor;
-            int z_order = 0;
+            int z_order;
             int direction;
             bool enabled = false;
+            LGF::Events::OnRenderEvents onRender;
         };
     };
 };

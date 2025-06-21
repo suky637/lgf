@@ -18,6 +18,7 @@ namespace LGF {
             public:
             Quad(const char* vertexShaderFile, const char* fragmentShaderFile);
             Quad(QuadType type);
+            ~Quad();
             void linkWindow(LGF::LGFWindow* window);
             unsigned int getShaderID();
             void render();

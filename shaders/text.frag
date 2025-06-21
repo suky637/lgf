@@ -7,6 +7,6 @@ uniform vec4 textColour;
 
 void main()
 {    
-    vec4 sampled = vec4(1.0, 1.0, 1.0, texture(text, TexCoords).r);
-    color = textColour * sampled;
+    float alpha = texture(text, TexCoords).r;
+    color = vec4(textColour.rgb, textColour.a * alpha);
 }

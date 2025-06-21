@@ -38,6 +38,8 @@ int main() {
 
     layout.addChild(&panel);
 
+    layout.setActive(true);
+
     while (!window.windowShouldClose()) {
         window.pollEvents();
         window.render();

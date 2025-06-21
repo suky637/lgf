@@ -19,8 +19,9 @@ namespace LGF {
             void setMaximumSize(const glm::vec2& size);
             float getCornerRadius();
             void setCornerRadius(float radius);
+            ~Panel();
             private:
-            float radius = 0.f;
+            float radius;
             void updatePanel();
             glm::vec2 size;
             glm::vec2 maxSize;

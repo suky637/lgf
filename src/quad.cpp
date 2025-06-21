@@ -115,3 +115,9 @@ void LGF::Draw::Quad::render() {
     glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
 }
+
+LGF::Draw::Quad::~Quad() {
+    glDeleteBuffers(1, &VBO);
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteProgram(shaderProgram);
+}

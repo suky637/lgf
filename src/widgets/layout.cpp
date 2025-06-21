@@ -7,5 +7,8 @@ LGF::Widgets::Layout::Layout(LGF::LGFWindow* window) {
         this->updateBounds(this->window->getBounds()->position, this->window->getBounds()->size);
         this->onBoundsResized.trigger();
     };
+    this->window->onRender += [&]{
+        onRender.trigger();
+    };
 
 }

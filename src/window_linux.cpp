@@ -59,7 +59,6 @@ LGF::LGFWindow::LGFWindow(size_t width, size_t height, const char* title) {
     running = true;
 
     glEnable(GL_BLEND);
-    glEnable(GL_DEPTH_TEST);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     // Creating matrices
@@ -106,7 +105,7 @@ void LGF::LGFWindow::pollEvents() {
 
 void LGF::LGFWindow::render() {
     glClearColor(fillColour.r, fillColour.g, fillColour.b, 1.f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT);
 
     // calling render shit
     this->onRenderBefore.trigger();

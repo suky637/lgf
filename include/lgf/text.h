@@ -26,8 +26,7 @@ namespace LGF {
             Font(const char* fontFaceFile, int fontSize, LGF::LGFWindow* window, const char* vertexShaderFile, const char* fragmentShaderFile);
             Font(const char* fontFaceFile, int fontSize, LGF::LGFWindow* window);
             void renderText(std::string text, float x, float y, float scale, glm::vec4 colour);
-            float getTextWidth(const std::string& text, float scale);
-            float getTextHeight(const std::string& text, float scale);
+            glm::vec2 getTextSize(const std::string& text, float scale);
             private:
             void matrix();
             void init(const char* fontFaceFile, int fontSize, const char* vertexShaderFile, const char* fragmentShaderFile);
