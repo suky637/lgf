@@ -95,6 +95,8 @@ LGF::Draw::Quad::Quad(LGF::Draw::QuadType type) {
         this->init("shaders/rounded.vert", "shaders/rounded.frag");
     } else if (type == LGF::Draw::QuadType::IMAGE_ROUNDED) {
         this->init("shaders/img_rounded.vert", "shaders/img_rounded.frag");
+    } else if (type == LGF::Draw::QuadType::BUTTON) {
+        this->init("shaders/button.vert", "shaders/button.frag");
     }
 }
 

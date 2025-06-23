@@ -5,26 +5,31 @@
 #include "lgf/widgets/anchors.h"
 #include "lgf/widgets/resizeDirection.h"
 #include "lgf/events.h"
+#include "lgf/widgets/widget_base.h"
 #include <vector>
 
 namespace LGF::Widgets {
-        class Widget {
+        template<typename T>
+        class Widget : public WidgetBase {
             public:
-            void setAnchor(LGF::Widgets::Anchors anchor);
-            void setResizeDirection(int direction);
-            void updateBounds(const glm::vec2& pos, const glm::vec2& size);
-            void addChild(Widget* child);
-            void setActive(bool isActive);
-            LGF::Events::Events onAddChild;
-            LGF::Events::Events onBoundsResized;
-            Widget* parent;
-            Bounds bounds;
-            std::vector<Widget*> children{};
-            glm::vec2 position;
-            LGF::LGFWindow* window;
-            LGF::Widgets::Anchors anchor;
-            int direction;
-            bool enabled = false;
-            LGF::Events::Events onRender;
+            T& setAnchor(LGF::Widgets::Anchors anchor) {
+                this->anchor = anchor;
+                return static_cast<T&>(*this);
+            }
+            T& setResizeDirection(int direction) {
+                this->direction = direction;
+                return static_cast<T&>(*this);
+            }
+            T& updateBounds(const glm::vec2& pos, const glm::vec2& size) {
+                this->bounds.position = pos;
+                this->bounds.size = size;
+                return static_cast<T&>(*this);
+            }
+            T& addChild(WidgetBase* child) {
+                child->parent = this;
+                child->onAddChild.trigger();
+                this->children.push_back(child);
+                return static_cast<T&>(*this);
+            }
         };
 };

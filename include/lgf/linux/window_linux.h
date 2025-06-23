@@ -35,16 +35,20 @@ namespace LGF {
         LGF::Events::Events onRenderAfter;
         LGF::Events::Events onResize;
         LGF::Events::Events onChar;
+        LGF::Events::Events onLeftMouseButtonReleased;
+        LGF::Events::Events onMouseMove;
+        LGF::Events::Events onEventHandlerBefore;
 
         Bounds* getBounds();
+
+        int mouseX;
+        int mouseY;
+
+        bool isLeftClicked = false;
 
         private:
         Bounds bounds;
         glm::vec3 fillColour;
-        std::vector<std::function<void()>> beforeDrawCalls{};
-        std::vector<std::function<void()>> drawCalls{};
-        std::vector<std::function<void()>> afterDrawCalls{};
-        std::vector<std::function<void()>> onResizeCalls{};
         Display* display;
         Window root;
         Window win;

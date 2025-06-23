@@ -9,11 +9,25 @@ uniform vec2 u_boundsSize;
 uniform vec2 u_dimensions;
 uniform float u_radius;
 
+uniform vec2 u_mousePosition;
+uniform vec2 u_bounds_size;
+uniform vec2 u_bounds_pos;
+
 uniform mat4 proj;
 uniform mat4 view;
 
 void main()
 {
+    vec4 out_colour = colour;
+
+    if (u_mousePosition.x > u_bounds_pos.x - u_bounds_size.x / 2.0 && u_mousePosition.x < u_bounds_pos.x + u_bounds_size.x / 2.0 && u_mousePosition.y > u_bounds_pos.y - u_bounds_size.y / 2.0 && u_mousePosition.y < u_bounds_pos.y + u_bounds_size.y / 2.0) {
+        if ((out_colour.r + out_colour.g + out_colour.b) / 3.0 > 0.5) {
+            out_colour = vec4(max(out_colour.r - 0.04, 0.0), max(out_colour.g - 0.04, 0.0), max(out_colour.b - 0.04, 0.0), out_colour.a);
+        } else {
+            out_colour = vec4(min(out_colour.r + 0.04, 1.0), min(out_colour.g + 0.04, 1.0), min(out_colour.b + 0.04, 1.0), out_colour.a);
+        }
+    }
+
     vec2 fragPos = gl_FragCoord.xy;
 
     vec2 minCorner = u_boundsPos - u_boundsSize / 2.0;
@@ -39,7 +53,7 @@ void main()
     else if (pixelPos.x < r && pixelPos.y > u_dimensions.y - r)
         corner = vec2(r, u_dimensions.y - r);
     else {
-        fragColor = colour;
+        fragColor = out_colour;
         return;
     }
 
@@ -47,5 +61,5 @@ void main()
     if (length(diff) > r)
         discard;
 
-    fragColor = colour;
+    fragColor = out_colour;
 }

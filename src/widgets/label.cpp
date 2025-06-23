@@ -31,10 +31,17 @@ void LGF::Widgets::Label::updateLabel() {
     }
 }
 
-void LGF::Widgets::Label::setPosition(const glm::vec2& position) {
+LGF::Widgets::Label& LGF::Widgets::Label::setPosition(const glm::vec2& position) {
     this->position = position;
+    return *this;
 }
 
-void LGF::Widgets::Label::setColour(const int& r, const int& g, const int& b, const int& a) {
+LGF::Widgets::Label& LGF::Widgets::Label::setColour(const int& r, const int& g, const int& b, const int& a) {
     this->colour = glm::vec4(r / 255.f, g / 255.f, b / 255.f, a / 255.f);
+    return *this;
+}
+
+LGF::Widgets::Label& LGF::Widgets::Label::setText(const std::string& text) {
+    this->text = text;
+    return *this;
 }

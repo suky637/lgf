@@ -10,15 +10,15 @@
 #include <any>
 
 namespace LGF::Widgets {
-        class ImagePanel : public LGF::Widgets::Widget {
+        class ImagePanel : public LGF::Widgets::Widget<ImagePanel> {
             public:
             ImagePanel(LGF::LGFWindow* window, LGF::Draw::Image* image);
-            void setRect(const glm::vec2& pos, const glm::vec2& size);
-            void setColour(const int& r, const int& g, const int& b, const int& a);
-            void setMinimumSize(const glm::vec2& size);
-            void setMaximumSize(const glm::vec2& size);
+            ImagePanel& setRect(const glm::vec2& pos, const glm::vec2& size);
+            ImagePanel& setColour(const int& r, const int& g, const int& b, const int& a);
+            ImagePanel& setMinimumSize(const glm::vec2& size);
+            ImagePanel& setMaximumSize(const glm::vec2& size);
             float getCornerRadius();
-            void setCornerRadius(float radius);
+            ImagePanel& setCornerRadius(float radius);
             ~ImagePanel();
             private:
             float radius;

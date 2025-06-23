@@ -5,13 +5,14 @@ add_library(lgf src/window_linux.cpp
 src/files.cpp
 src/quad.cpp
 src/events.cpp
+src/text.cpp
+src/image.cpp
 src/widgets/panel.cpp
-src/widgets/widget.cpp
 src/widgets/layout.cpp
 src/widgets/label.cpp
 src/widgets/image_panel.cpp
-src/text.cpp
-src/image.cpp
+src/widgets/button.cpp
+src/widgets/widget_base.cpp
 )
 
 find_package(X11 REQUIRED)

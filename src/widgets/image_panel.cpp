@@ -4,8 +4,9 @@ float LGF::Widgets::ImagePanel::getCornerRadius() {
     return this->radius;
 }
 
-void LGF::Widgets::ImagePanel::setCornerRadius(float radius) {
+LGF::Widgets::ImagePanel& LGF::Widgets::ImagePanel::setCornerRadius(float radius) {
     this->radius = radius;
+    return *this;
 }
 
 LGF::Widgets::ImagePanel::ImagePanel(LGF::LGFWindow* window, LGF::Draw::Image* image) :
@@ -39,11 +40,13 @@ LGF::Widgets::ImagePanel::ImagePanel(LGF::LGFWindow* window, LGF::Draw::Image* i
     this->anchor = LGF::Widgets::Anchors::CENTRE;
 }
 
-void LGF::Widgets::ImagePanel::setMinimumSize(const glm::vec2& size) {
+LGF::Widgets::ImagePanel& LGF::Widgets::ImagePanel::setMinimumSize(const glm::vec2& size) {
     this->minSize = size;
+    return *this;
 }
-void LGF::Widgets::ImagePanel::setMaximumSize(const glm::vec2& size) {
+LGF::Widgets::ImagePanel& LGF::Widgets::ImagePanel::setMaximumSize(const glm::vec2& size) {
     this->maxSize = size;
+    return *this;
 }
 
 void LGF::Widgets::ImagePanel::updatePanel() {
@@ -134,16 +137,18 @@ void LGF::Widgets::ImagePanel::updatePanel() {
     this->onBoundsResized.trigger();
 }
 
-void LGF::Widgets::ImagePanel::setRect(const glm::vec2& pos, const glm::vec2& size) {
+LGF::Widgets::ImagePanel& LGF::Widgets::ImagePanel::setRect(const glm::vec2& pos, const glm::vec2& size) {
     this->position = pos;
     this->size = size;
     this->updateBounds(pos, size);
     this->bounds.originalSize = size;
     updatePanel();
+    return *this;
 }
 
-void LGF::Widgets::ImagePanel::setColour(const int& r, const int& g, const int& b, const int& a) {
+LGF::Widgets::ImagePanel& LGF::Widgets::ImagePanel::setColour(const int& r, const int& g, const int& b, const int& a) {
     glUniform4f(glGetUniformLocation(quad.quad.getShaderID(), "colour"), r / 255.f, g / 255.f, b / 255.f, a / 255.f);
+    return *this;
 }
 
 LGF::Widgets::ImagePanel::~ImagePanel() {

@@ -1,16 +1,16 @@
-#include "lgf/widgets/panel.h"
+#include "lgf/widgets/button.h"
 
-float LGF::Widgets::Panel::getCornerRadius() {
+float LGF::Widgets::Button::getCornerRadius() {
     return this->radius;
 }
 
-LGF::Widgets::Panel& LGF::Widgets::Panel::setCornerRadius(float radius) {
+LGF::Widgets::Button& LGF::Widgets::Button::setCornerRadius(float radius) {
     this->radius = radius;
     return *this;
 }
 
-LGF::Widgets::Panel::Panel(LGF::LGFWindow* window) :
-    quad{LGF::Draw::QuadType::ROUNDED},
+LGF::Widgets::Button::Button(LGF::LGFWindow* window) :
+    quad{LGF::Draw::QuadType::BUTTON},
     radius(0.f),
     minSize(glm::vec2(0.f)),
     maxSize(window->getBounds()->size)
@@ -32,24 +32,42 @@ LGF::Widgets::Panel::Panel(LGF::LGFWindow* window) :
             glUniform2f(glGetUniformLocation(quad.getShaderID(), "u_dimensions"), rectSize.x, rectSize.y);
             glUniform2f(glGetUniformLocation(quad.getShaderID(), "u_boundsPos"), this->parent->bounds.position.x, this->parent->bounds.position.y);
             glUniform2f(glGetUniformLocation(quad.getShaderID(), "u_boundsSize"), this->parent->bounds.size.x, this->parent->bounds.size.y);
+
+            glUniform2f(glGetUniformLocation(quad.getShaderID(), "u_mousePosition"), this->window->mouseX, this->window->height - this->window->mouseY);
+            glUniform2f(glGetUniformLocation(quad.getShaderID(), "u_bounds_size"), this->bounds.size.x, this->bounds.size.y);
+            glUniform2f(glGetUniformLocation(quad.getShaderID(), "u_bounds_pos"), this->bounds.position.x, this->bounds.position.y);
+
             glUniform1f(glGetUniformLocation(quad.getShaderID(), "u_radius"), radius);
             quad.render();
             this->onRender.trigger();
         };
     };
+    this->window->onEventHandlerBefore += [&] {
+        if (!this->enabled) return;
+        clicked = false;
+    };
+    this->window->onLeftMouseButtonReleased += [&] {
+        if (!this->enabled) return;
+        glm::vec2 world_pos = glm::vec2(this->window->mouseX, this->window->getBounds()->size.y - this->window->mouseY);
+
+        if (world_pos.x > this->bounds.position.x - this->bounds.size.x / 2.f && world_pos.x < this->bounds.position.x + this->bounds.size.x / 2.f && world_pos.y > this->bounds.position.y - this->bounds.size.y / 2.f && world_pos.y < this->bounds.position.y + this->bounds.size.y / 2.f) {
+            this->onButtonClicked.trigger();
+            clicked = true;
+        }
+    };
     this->anchor = LGF::Widgets::Anchors::CENTRE;
 }
 
-LGF::Widgets::Panel& LGF::Widgets::Panel::setMinimumSize(const glm::vec2& size) {
+LGF::Widgets::Button& LGF::Widgets::Button::setMinimumSize(const glm::vec2& size) {
     this->minSize = size;
     return *this;
 }
-LGF::Widgets::Panel& LGF::Widgets::Panel::setMaximumSize(const glm::vec2& size) {
+LGF::Widgets::Button& LGF::Widgets::Button::setMaximumSize(const glm::vec2& size) {
     this->maxSize = size;
     return *this;
 }
 
-void LGF::Widgets::Panel::updatePanel() {
+void LGF::Widgets::Button::updatePanel() {
     if (!enabled) return;
     if (this->parent == nullptr) {
         std::cout << "Error: Panel doesn't have a parent; please assign a Layout to the panel; skipping the function updatePanel()\n**WARNING** This can lead the widgets not resizing which is not what you want. Like I said, the panel must be a child of a widget.\n";
@@ -137,7 +155,7 @@ void LGF::Widgets::Panel::updatePanel() {
     this->onBoundsResized.trigger();
 }
 
-LGF::Widgets::Panel& LGF::Widgets::Panel::setRect(const glm::vec2& pos, const glm::vec2& size) {
+LGF::Widgets::Button& LGF::Widgets::Button::setRect(const glm::vec2& pos, const glm::vec2& size) {
     this->position = pos;
     this->size = size;
     this->updateBounds(pos, size);
@@ -146,12 +164,12 @@ LGF::Widgets::Panel& LGF::Widgets::Panel::setRect(const glm::vec2& pos, const gl
     return *this;
 }
 
-LGF::Widgets::Panel& LGF::Widgets::Panel::setColour(const int& r, const int& g, const int& b, const int& a) {
+LGF::Widgets::Button& LGF::Widgets::Button::setColour(const int& r, const int& g, const int& b, const int& a) {
     glUniform4f(glGetUniformLocation(quad.getShaderID(), "colour"), r / 255.f, g / 255.f, b / 255.f, a / 255.f);
     return *this;
 }
 
-LGF::Widgets::Panel::~Panel() {
+LGF::Widgets::Button::~Button() {
     this->children.clear();
     this->quad.~Quad();
 }

@@ -76,6 +76,11 @@ void LGF::LGFWindow::setFillColour(const int& r, const int& g, const int& b) {
 }
 
 void LGF::LGFWindow::pollEvents() {
+
+    onEventHandlerBefore.trigger();
+
+    isLeftClicked = false;
+
     while (XPending(display)) {
         XEvent xev;
         XNextEvent(display, &xev);
@@ -92,6 +97,19 @@ void LGF::LGFWindow::pollEvents() {
             bounds = {glm::vec2(width / 2.f, height / 2.f), glm::vec2(width, height)};
             this->onResize.trigger();
             break;
+        case MotionNotify: {
+            mouseX = xev.xmotion.x;
+            mouseY = xev.xmotion.y;
+            onMouseMove.trigger();
+            break;
+        }
+        case ButtonRelease: {
+            if (xev.xbutton.button == 1) {
+                isLeftClicked = true;
+                onLeftMouseButtonReleased.trigger();
+            }
+            break;
+        }
         case ClientMessage:
             if ((Atom)xev.xclient.data.l[0] == wmDeleteMessage) {
                 running = false;  // User clicked close button

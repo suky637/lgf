@@ -12,11 +12,12 @@
 #include <string>
 
 namespace LGF::Widgets {
-        class Label: public LGF::Widgets::Widget {
+        class Label: public LGF::Widgets::Widget<Label> {
             public:
             Label(LGF::LGFWindow* window, LGF::Draw::Font* font);
-            void setPosition(const glm::vec2& position);
-            void setColour(const int& r, const int& g, const int& b, const int& a);
+            Label& setPosition(const glm::vec2& position);
+            Label& setColour(const int& r, const int& g, const int& b, const int& a);
+            Label& setText(const std::string& text);
             std::string text;
             private:
             glm::vec2 modified_pos;

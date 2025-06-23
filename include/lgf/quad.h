@@ -9,7 +9,8 @@
 namespace LGF::Draw {
         enum class QuadType {
             ROUNDED,
-            IMAGE_ROUNDED
+            IMAGE_ROUNDED,
+            BUTTON
         };
         namespace Primitives {
             extern float rectangle[];

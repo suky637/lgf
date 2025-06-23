@@ -12,6 +12,8 @@ uniform float u_radius;
 uniform mat4 proj;
 uniform mat4 view;
 
+uniform sampler2D tex0;
+
 void main()
 {
     vec2 fragPos = gl_FragCoord.xy;
@@ -39,7 +41,7 @@ void main()
     else if (pixelPos.x < r && pixelPos.y > u_dimensions.y - r)
         corner = vec2(r, u_dimensions.y - r);
     else {
-        fragColor = colour;
+        fragColor = texture(tex0, fragUV) * colour;
         return;
     }
 
@@ -47,5 +49,5 @@ void main()
     if (length(diff) > r)
         discard;
 
-    fragColor = colour;
+    fragColor = texture(tex0, fragUV) * colour;
 }
