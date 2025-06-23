@@ -7,8 +7,7 @@
 #include "lgf/events.h"
 #include <vector>
 
-namespace LGF {
-    namespace Widgets {
+namespace LGF::Widgets {
         class Widget {
             public:
             void setAnchor(LGF::Widgets::Anchors anchor);
@@ -16,19 +15,16 @@ namespace LGF {
             void updateBounds(const glm::vec2& pos, const glm::vec2& size);
             void addChild(Widget* child);
             void setActive(bool isActive);
-            void setZOrder(int z_order);
-            LGF::Events::OnAddChildEvents onAddChild;
-            LGF::Events::OnBoundsResizedEvents onBoundsResized;
+            LGF::Events::Events onAddChild;
+            LGF::Events::Events onBoundsResized;
             Widget* parent;
             Bounds bounds;
             std::vector<Widget*> children{};
             glm::vec2 position;
             LGF::LGFWindow* window;
             LGF::Widgets::Anchors anchor;
-            int z_order;
             int direction;
             bool enabled = false;
-            LGF::Events::OnRenderEvents onRender;
+            LGF::Events::Events onRender;
         };
-    };
 };

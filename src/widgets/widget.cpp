@@ -20,10 +20,6 @@ void LGF::Widgets::Widget::addChild(LGF::Widgets::Widget* child) {
 
 }
 
-void LGF::Widgets::Widget::setZOrder(int zOrder) {
-    this->z_order = zOrder;
-}
-
 void LGF::Widgets::Widget::setActive(bool isActive) {
     for (auto child : children) {
         enabled = isActive;

@@ -30,10 +30,11 @@ namespace LGF {
         glm::mat4 view;
 
         /* Events :) */
-        LGF::Events::OnRenderEvents onRender;
-        LGF::Events::OnRenderBeforeEvents onRenderBefore;
-        LGF::Events::OnRenderAfterEvents onRenderAfter;
-        LGF::Events::OnResizeEvents onResize;
+        LGF::Events::Events onRender;
+        LGF::Events::Events onRenderBefore;
+        LGF::Events::Events onRenderAfter;
+        LGF::Events::Events onResize;
+        LGF::Events::Events onChar;
 
         Bounds* getBounds();
 
@@ -50,5 +51,8 @@ namespace LGF {
         GLXContext ctx;
         Atom wmDeleteMessage;
         bool running;
+        XIM xim;
+        XIC xic;
+        std::string lastChar;
     };
 };

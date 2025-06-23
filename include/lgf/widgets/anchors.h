@@ -1,6 +1,5 @@
 #pragma once
-namespace LGF {
-    namespace Widgets {
+namespace LGF::Widgets {
         enum class Anchors {
             LEFT,
             RIGHT,
@@ -12,5 +11,4 @@ namespace LGF {
             BOTTOM_RIGHT,
             CENTRE
         };
-    }
 };

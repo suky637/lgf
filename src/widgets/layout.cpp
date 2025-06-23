@@ -8,7 +8,8 @@ LGF::Widgets::Layout::Layout(LGF::LGFWindow* window) {
         this->onBoundsResized.trigger();
     };
     this->window->onRender += [&]{
-        onRender.trigger();
+        if (enabled)
+            onRender.trigger();
     };
 
 }

@@ -4,12 +4,12 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <lgf/image.h>
 
-namespace LGF {
-    namespace Draw {
+namespace LGF::Draw {
         enum class QuadType {
             ROUNDED,
-            ROUGH
+            IMAGE_ROUNDED
         };
         namespace Primitives {
             extern float rectangle[];
@@ -24,10 +24,18 @@ namespace LGF {
             void render();
             void setRect(const glm::vec2& pos, const glm::vec2& size);
             glm::mat4 model;
-            private:
-            LGF::LGFWindow* window;
-            void init(const char* vertexShaderFile, const char* fragmentShaderFile);
             unsigned int VAO, VBO, shaderProgram;
+            QuadType type;
+            LGF::LGFWindow* window;
+            private:
+            void init(const char* vertexShaderFile, const char* fragmentShaderFile);
         };
-    };
+        class ImageQuad {
+            public:
+            void render();
+            ImageQuad(Image* img);
+            Quad quad;
+            private:
+            Image* image;
+        };
 };

@@ -7,6 +7,7 @@ LGF::Widgets::Label::Label(LGF::LGFWindow* window, LGF::Draw::Font* font) {
             this->updateLabel();
         };
         this->parent->onRender += [&]() {
+            if (!enabled) return;
             this->font->renderText(this->text, this->bounds.position.x, this->bounds.position.y, 0.5f, this->colour);
             this->onRender.trigger();
         };

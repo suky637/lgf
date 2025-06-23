@@ -13,8 +13,7 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-namespace LGF {
-    namespace Draw {
+namespace LGF::Draw {
         struct Character {
             unsigned int textureID;
             glm::ivec2 Size;
@@ -36,5 +35,4 @@ namespace LGF {
             unsigned int VBO;
             LGF::LGFWindow* window;
         };
-    };
 };

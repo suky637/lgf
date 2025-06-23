@@ -1,10 +1,8 @@
 #pragma once
 
-namespace LGF {
-    namespace Widgets {
+namespace LGF::Widgets {
         enum ResizeDirection {
-            HORIZONTAL = 1 << 0,
-            VERTICAL = 1 << 1,
+            HORIZONTAL = 1 << 1,
+            VERTICAL = 1 << 2,
         };
-    }
 };

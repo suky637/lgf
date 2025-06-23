@@ -90,10 +90,11 @@ LGF::Draw::Quad::Quad(const char* vertexShaderFile, const char* fragmentShaderFi
 
 
 LGF::Draw::Quad::Quad(LGF::Draw::QuadType type) {
+    this->type = type;
     if (type == LGF::Draw::QuadType::ROUNDED) {
         this->init("shaders/rounded.vert", "shaders/rounded.frag");
-    } else if (type == LGF::Draw::QuadType::ROUGH) {
-        this->init("shaders/rough.vert", "shaders/rough.frag");
+    } else if (type == LGF::Draw::QuadType::IMAGE_ROUNDED) {
+        this->init("shaders/img_rounded.vert", "shaders/img_rounded.frag");
     }
 }
 
@@ -120,4 +121,21 @@ LGF::Draw::Quad::~Quad() {
     glDeleteBuffers(1, &VBO);
     glDeleteVertexArrays(1, &VAO);
     glDeleteProgram(shaderProgram);
+}
+
+LGF::Draw::ImageQuad::ImageQuad(LGF::Draw::Image* img) :
+quad{LGF::Draw::QuadType::IMAGE_ROUNDED} {
+    this->image = img;
+}
+
+void LGF::Draw::ImageQuad::render() {
+    glUseProgram(quad.shaderProgram);
+    glUniformMatrix4fv(glGetUniformLocation(quad.shaderProgram, "proj"), 1, GL_FALSE, glm::value_ptr(quad.window->proj));
+    glUniformMatrix4fv(glGetUniformLocation(quad.shaderProgram, "view"), 1, GL_FALSE, glm::value_ptr(quad.window->view));
+    glUniformMatrix4fv(glGetUniformLocation(quad.shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(quad.model));
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, image->textureID);
+    glUniform1i(glGetUniformLocation(quad.shaderProgram, "tex0"), 0);
+    glBindVertexArray(quad.VAO);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
 }

@@ -11,8 +11,7 @@
 #include <glm/glm.hpp>
 #include <string>
 
-namespace LGF {
-    namespace Widgets {
+namespace LGF::Widgets {
         class Label: public LGF::Widgets::Widget {
             public:
             Label(LGF::LGFWindow* window, LGF::Draw::Font* font);
@@ -25,5 +24,4 @@ namespace LGF {
             LGF::Draw::Font* font;
             void updateLabel();
         };
-    };
 };
