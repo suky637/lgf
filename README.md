@@ -87,4 +87,4 @@ int main() {
 ```
 
 This should render this:
-![Window output](https://github.com/suky637/lgf/blob/main/screenshots/2025-06-11.png)
+![Window output](https://github.com/suky637/lgf/blob/main/screenshots/2025-06-23.png)
