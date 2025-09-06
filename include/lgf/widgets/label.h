@@ -20,6 +20,7 @@ namespace LGF::Widgets {
             Label& setText(const std::string& text);
             std::string text;
             private:
+            bool hasChild = false;
             glm::vec2 modified_pos;
             glm::vec4 colour;
             LGF::Draw::Font* font;

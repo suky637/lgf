@@ -3,6 +3,7 @@
 LGF::Widgets::Label::Label(LGF::LGFWindow* window, LGF::Draw::Font* font) {
     this->window = window;
     this->onAddChild += [&]() {
+        hasChild = true;
         this->parent->onBoundsResized += [&]() {
             this->updateLabel();
         };
@@ -17,6 +18,7 @@ LGF::Widgets::Label::Label(LGF::LGFWindow* window, LGF::Draw::Font* font) {
 }
 
 void LGF::Widgets::Label::updateLabel() {
+    if (this->parent == nullptr || !this->hasChild) return;
     glm::vec2 size = this->font->getTextSize(this->text, 0.5f);
 
     float centre_x = this->parent->bounds.position.x + position.x - size.x / 2.f;
@@ -33,6 +35,7 @@ void LGF::Widgets::Label::updateLabel() {
 
 LGF::Widgets::Label& LGF::Widgets::Label::setPosition(const glm::vec2& position) {
     this->position = position;
+    this->updateLabel();
     return *this;
 }
 
@@ -43,5 +46,6 @@ LGF::Widgets::Label& LGF::Widgets::Label::setColour(const int& r, const int& g, 
 
 LGF::Widgets::Label& LGF::Widgets::Label::setText(const std::string& text) {
     this->text = text;
+    this->updateLabel();
     return *this;
 }

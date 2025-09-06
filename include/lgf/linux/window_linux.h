@@ -4,10 +4,13 @@
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
 #include <X11/Xatom.h>
+#include <X11/Xlib-xcb.h>
 #include <glad/glad.h>
 #include <GL/glx.h>
 #include <iostream>
 #include <glm/glm.hpp>
+#include <xkbcommon/xkbcommon.h>
+#include <xkbcommon/xkbcommon-x11.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "lgf/events.h"
@@ -46,7 +49,12 @@ namespace LGF {
 
         bool isLeftClicked = false;
 
+        void clearTextString();
+        std::string getTextString();
+        
         private:
+        void handleKeypresses(XKeyEvent* event, bool isReleased);
+        std::string currentTextString = "";
         Bounds bounds;
         glm::vec3 fillColour;
         Display* display;
@@ -55,8 +63,11 @@ namespace LGF {
         GLXContext ctx;
         Atom wmDeleteMessage;
         bool running;
-        XIM xim;
-        XIC xic;
         std::string lastChar;
+
+        // keyboard
+        struct xkb_keymap* _xbk_keymap;
+        struct xkb_state* _xbk_state;
+        struct xkb_context* _xbk_ctx;
     };
 };

@@ -1,51 +1,73 @@
 #include "lgf/text.h"
 #include "lgf/files.h"
 
+const LGF::Draw::Character& LGF::Draw::Font::loadGlyth(uint32_t codepoint) {
+    if (characters.find(codepoint) != characters.end())
+        return characters[codepoint];
+    
+    if (!face->charmap || face->charmap->encoding != FT_ENCODING_UNICODE)
+        if (FT_Load_Char(face, codepoint, FT_ENCODING_UNICODE)) {
+            std::cerr << "[ERROR] No Unicode charmap in font\n";
+            return characters['?'];
+        }
+
+    unsigned int glyph_index = FT_Get_Char_Index(face, codepoint);
+    if (glyph_index == 0) {
+        if (codepoint >= 32 && !(codepoint >= 0x7F && codepoint <= 0x9F))
+            std::cerr << "[WARN] No glyph for U+" << std::hex << codepoint << std::dec << "\n";
+        return characters['?'];
+    }
+
+    if (FT_Load_Glyph(face, glyph_index, FT_LOAD_RENDER)) {
+        std::cerr << "[ERROR] Failed to load glyph for U+" << std::hex << codepoint << std::dec << "\n";
+        return characters['?'];
+    }
+
+    unsigned int textureID;
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED,
+                 face->glyph->bitmap.width,
+                 face->glyph->bitmap.rows,
+                 0, GL_RED, GL_UNSIGNED_BYTE, face->glyph->bitmap.buffer);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    Character character = {
+        textureID,
+        glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
+        glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
+        face->glyph->advance.x
+    };
+
+    characters[codepoint] = character;
+    return characters[codepoint];
+}
+
 void LGF::Draw::Font::init(const char* fontFaceFile, int fontSize, const char* vertexShaderFile, const char* fragmentShaderFile) {
-    FT_Library ft;
     if (FT_Init_FreeType(&ft)) {
         std::cerr << "[CRITICAL] Error: Failed to init FreeType.\n";
         exit(1);
     }
 
-    FT_Face face;
+    
     if (FT_New_Face(ft, fontFaceFile, 0, &face)) {
         std::cerr << "[CRITICAL] Error: Font file couldn't be read or written, or it is unsupported.\n";
         exit(1);
     }
     else {
+        if (FT_Select_Charmap(face, FT_ENCODING_UNICODE))
+            std::cerr << "Font has no Unicode charmap.\n";
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         FT_Set_Pixel_Sizes(face, 0, fontSize);
 
         for (unsigned char c = 0; c < 128; c++) {
-            if (FT_Load_Char(face, c, FT_LOAD_RENDER)) {
-                std::cout << "[CRITICAL] Error: Failed to load glyph.\n";
-                exit(1);
-            }
-
-            unsigned int textureID;
-            glGenTextures(1, &textureID);
-            glBindTexture(GL_TEXTURE_2D, textureID);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, face->glyph->bitmap.width, face->glyph->bitmap.rows, 0, GL_RED, GL_UNSIGNED_BYTE, face->glyph->bitmap.buffer);
-
-            
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-            Character character = {
-                textureID,
-                glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
-                glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
-                face->glyph->advance.x
-            };
-            characters.insert(std::pair<char, Character>(c, character));
+            this->loadGlyth(c);
         }
     }
-
-    FT_Done_Face(face);
-    FT_Done_FreeType(ft);
 
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -112,9 +134,10 @@ void LGF::Draw::Font::renderText(std::string text, float x, float y, float scale
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(VAO);
 
-    std::string::const_iterator c;
-    for (c = text.begin(); c != text.end(); c++) {
-        Character ch = characters[*c];
+    auto it = text.begin();
+    while (it != text.end()) {
+        uint32_t cp = utf8::next(it, text.end());
+        Character ch = this->loadGlyth(cp);
 
         float xpos = x + ch.Bearing.x * scale;
         float ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
@@ -159,7 +182,7 @@ LGF::Draw::Font::Font(const char* fontFaceFile, int fontSize, LGF::LGFWindow* wi
 }
 
 glm::vec2 LGF::Draw::Font::getTextSize(const std::string& text, float scale) {
-    glm::vec2 return_val{0.f};
+    /*glm::vec2 return_val{0.f};
     for (const char& c : text) {
         auto ch = characters[c];
         return_val.x += (ch.Advance >> 6) * scale;
@@ -169,4 +192,25 @@ glm::vec2 LGF::Draw::Font::getTextSize(const std::string& text, float scale) {
         }
     }
     return return_val;
+    */
+    glm::vec2 size{0.f};
+    auto it = text.begin();
+    auto end = text.end();
+
+    while (it != end) {
+        uint32_t cp = utf8::next(it, end);
+        auto chIt = characters.find(cp);
+        if (chIt == characters.end()) continue;
+        const auto& ch = chIt->second;
+        
+        size.x += (ch.Advance >> 6) * scale;
+        float height = ch.Size.y * scale;
+        if (height > size.y) size.y = height;
+    }
+    return size;
+}
+
+LGF::Draw::Font::~Font() {
+    FT_Done_Face(face);
+    FT_Done_FreeType(ft);
 }

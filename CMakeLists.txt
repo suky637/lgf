@@ -13,14 +13,21 @@ src/widgets/label.cpp
 src/widgets/image_panel.cpp
 src/widgets/button.cpp
 src/widgets/widget_base.cpp
+src/widgets/placeholder.cpp
+src/widgets/textbox.cpp
 )
 
 find_package(X11 REQUIRED)
 find_package(PNG REQUIRED)
 find_package(OpenGL REQUIRED)
 
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(XKBCOMMON REQUIRED xkbcommon xkbcommon-x11 x11 x11-xcb)
+
 set(BUILD_SHARED_LIBS OFF)
 find_package(PNG REQUIRED STATIC)
 
-target_include_directories(lgf PUBLIC include ${X11_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR} ${PNG_INCLUDE_DIRS} ../glad/include ../glm ../freetype-2.10.0/include)
-target_link_libraries(lgf PRIVATE ${X11_LIBRARIES} ${PNG_LIBRARIES} GL glad glm freetype)
+target_include_directories(lgf PUBLIC include ${X11_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR} ${XKBCOMMON_INCLUDE_DIRS} ${PNG_INCLUDE_DIRS} ../glad/include ../glm ../freetype-2.10.0/include)
+target_link_libraries(lgf PRIVATE ${XKBCOMMON_LIBRARIES} ${X11_LIBRARIES} ${PNG_LIBRARIES} GL glad glm freetype)
+
+target_compile_options(lgf PRIVATE ${XKBCOMMON_CFLAGS_OTHER})
