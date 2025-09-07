@@ -17,10 +17,15 @@ namespace LGF::Widgets {
             ImagePanel& setColour(const int& r, const int& g, const int& b, const int& a);
             ImagePanel& setMinimumSize(const glm::vec2& size);
             ImagePanel& setMaximumSize(const glm::vec2& size);
+            ImagePanel& forceRatio(bool force);
             float getCornerRadius();
             ImagePanel& setCornerRadius(float radius);
             ~ImagePanel();
             private:
+            bool force_ratio;
+            glm::vec2 UV_modifier;
+            glm::vec2 UV_offset;
+            glm::vec2 original_size;
             float radius;
             void updatePanel();
             glm::vec2 size;

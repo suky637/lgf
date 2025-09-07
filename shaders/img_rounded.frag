@@ -7,6 +7,8 @@ uniform vec4 colour;
 uniform vec2 u_boundsPos;
 uniform vec2 u_boundsSize;
 uniform vec2 u_dimensions;
+uniform vec2 u_uvmod;
+uniform vec2 u_uvoffset;
 uniform float u_radius;
 
 uniform mat4 proj;
@@ -41,7 +43,7 @@ void main()
     else if (pixelPos.x < r && pixelPos.y > u_dimensions.y - r)
         corner = vec2(r, u_dimensions.y - r);
     else {
-        fragColor = texture(tex0, fragUV) * colour;
+        fragColor = texture(tex0, fragUV * u_uvmod + u_uvoffset) * colour;
         return;
     }
 
@@ -49,5 +51,5 @@ void main()
     if (length(diff) > r)
         discard;
 
-    fragColor = texture(tex0, fragUV) * colour;
+    fragColor = texture(tex0, fragUV * u_uvmod + u_uvoffset) * colour;
 }

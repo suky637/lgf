@@ -15,6 +15,8 @@ LGF::Widgets::ImagePanel::ImagePanel(LGF::LGFWindow* window, LGF::Draw::Image* i
     minSize(glm::vec2(0.f)),
     maxSize(window->getBounds()->size)
 {
+    UV_modifier = glm::vec2(1.f);
+    original_size = glm::vec2(0.f);
     this->window = window;
     quad.quad.linkWindow(window);
     this->bounds = {glm::vec2(0.f), glm::vec2(0.f), glm::vec2(0.f)};
@@ -32,7 +34,10 @@ LGF::Widgets::ImagePanel::ImagePanel(LGF::LGFWindow* window, LGF::Draw::Image* i
             glUniform2f(glGetUniformLocation(quad.quad.getShaderID(), "u_dimensions"), rectSize.x, rectSize.y);
             glUniform2f(glGetUniformLocation(quad.quad.getShaderID(), "u_boundsPos"), this->parent->bounds.position.x, this->parent->bounds.position.y);
             glUniform2f(glGetUniformLocation(quad.quad.getShaderID(), "u_boundsSize"), this->parent->bounds.size.x, this->parent->bounds.size.y);
+            glUniform2f(glGetUniformLocation(quad.quad.getShaderID(), "u_uvmod"), this->UV_modifier.x, this->UV_modifier.y);
+            glUniform2f(glGetUniformLocation(quad.quad.getShaderID(), "u_uvoffset"), this->UV_offset.x, this->UV_offset.y);
             glUniform1f(glGetUniformLocation(quad.quad.getShaderID(), "u_radius"), radius);
+
             quad.render();
             this->onRender.trigger();
         };
@@ -134,11 +139,39 @@ void LGF::Widgets::ImagePanel::updatePanel() {
             break;
         }
     }
+
+    if (force_ratio) {
+        float original_ratio = this->original_size.x / this->original_size.y;
+        float new_ratio = size_.x / size_.y;
+        //std::cout << original_ratio << "\n" << new_ratio << "\n";
+        if (new_ratio < original_ratio) {
+            this->UV_modifier.x = 1.f / (original_ratio / new_ratio);
+            UV_offset.x = 0.5f - UV_modifier.x / 2.f;
+            this->UV_modifier.y = 1.f;
+            UV_offset.y = 0.f;
+        }
+        else {
+            this->UV_modifier.x = 1.f;
+            UV_offset.y = 0.5f - UV_modifier.y / 2.f;
+            this->UV_modifier.y = original_ratio / new_ratio;
+            UV_offset.x = 0.f;
+        }
+    }
+
     this->onBoundsResized.trigger();
+}
+
+LGF::Widgets::ImagePanel& LGF::Widgets::ImagePanel::forceRatio(bool force) {
+    this->force_ratio = force;
+    return *this;
 }
 
 LGF::Widgets::ImagePanel& LGF::Widgets::ImagePanel::setRect(const glm::vec2& pos, const glm::vec2& size) {
     this->position = pos;
+    if (this->original_size.x == 0 && this->original_size.y == 0) {
+        this->original_size = size;
+        std::cout << "Set Original Size to: (" << original_size.x << "; " << original_size.y << ")\n";
+    }
     this->size = size;
     this->updateBounds(pos, size);
     this->bounds.originalSize = size;
