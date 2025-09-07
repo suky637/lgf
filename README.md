@@ -5,6 +5,9 @@ Landeria's GUI Framework (yes I know, very original name)
 
 Currently I support:
 - Frames
+- Buttons
+- Images
+- Labels
 
 Dependancies:
 - glad

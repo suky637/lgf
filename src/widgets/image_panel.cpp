@@ -170,7 +170,6 @@ LGF::Widgets::ImagePanel& LGF::Widgets::ImagePanel::setRect(const glm::vec2& pos
     this->position = pos;
     if (this->original_size.x == 0 && this->original_size.y == 0) {
         this->original_size = size;
-        std::cout << "Set Original Size to: (" << original_size.x << "; " << original_size.y << ")\n";
     }
     this->size = size;
     this->updateBounds(pos, size);
