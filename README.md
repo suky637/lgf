@@ -1,7 +1,7 @@
 # LGF
-Landeria's GUI Framework (yes I know, very original name)
+Landeria's GUI Framework (yes I know, very original name) [Website](https://landeria.online/)
 
-## /!\ THIS PROJECT IS IN WIP, IT IS NOT DONE /!\
+## /!\ THIS PROJECT IS PRONED TO BUGS, STILL IN ALPHA /!\
 
 Currently I support:
 - Frames
@@ -13,10 +13,63 @@ Dependancies:
 - glad
 - glm
 - freetype
+- libpng
+- zlib
 
-Please note there is only linux back-ends at the moment, windows back-ends will be developped in later stages of development. Also, it is quite easy to setup windows back-end.
+---
+Please note that the windows back-ends are proned for bugs, as it is not finished.
+---
 
+---
 Also please copy the shaders folder to your build folder to make it work.
+---
+
+## Setup
+for the setup of this framework it is advised to use this CMakeLists config, even if it isn't perfect it should make you up and running, also make sure to download the libraries glad, glm and freetype for linux and add zlib and libpng for windows (also it is expected that you have the png and zlib package on linux downloaded on the computer):
+```CMake
+cmake_minimum_required(VERSION 3.10.0)
+project(lgf-test VERSION 0.1.0 LANGUAGES C CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+add_subdirectory(lib/glad)
+add_subdirectory(lib/lgf)
+add_subdirectory(lib/glm)
+add_subdirectory(lib/freetype-2.10.0)
+
+if (WIN32)
+	add_subdirectory(lib/zlib)
+	
+	set(ZLIB_LIBRARY zlibstatic)
+	set(ZLIB_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/lib/zlib")
+
+	add_subdirectory(lib/libpng-1.6.50)
+endif()
+
+add_executable(lgf-test main.cpp)
+
+if (LINUX)
+	find_package(X11 REQUIRED)
+	find_package(PNG REQUIRED)
+
+	set(BUILD_SHARED_LIBS OFF)
+	find_package(PNG REQUIRED STATIC)
+endif()
+
+
+if (LINUX)
+	target_include_directories(lgf-test PRIVATE ${X11_INCLUDE_DIR} ${PNG_INCLUDE_DIRS})
+	target_link_libraries(lgf-test PRIVATE GL ${X11_LIBRARIES} ${PNG_LIBRARIES})
+endif()
+
+target_link_libraries(lgf-test PRIVATE glad lgf glm freetype)
+
+if (WIN32)
+	target_link_directories(lgf-test PRIVATE lib/libpng-1.6.50)
+	target_link_libraries(lgf-test PRIVATE opengl32 zlibstatic png_static)
+endif()
+```
 
 ## Example
 ```C++
