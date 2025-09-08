@@ -40,6 +40,10 @@ Some library features will be disabled.
 If you leave UTF_CPP_CPLUSPLUS undefined, it will be internally assigned to __cplusplus.
 */
 
+#ifdef _WIN32
+#include <cassert>
+#endif
+
 #include "utf8/checked.h"
 #include "utf8/unchecked.h"
 

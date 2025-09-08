@@ -14,6 +14,10 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
+#ifdef assert
+#undef assert
+#endif
+
 #include "utf8/utf8.h"
 
 namespace LGF::Draw {

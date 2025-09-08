@@ -53,6 +53,8 @@ int LGF::Draw::Image::load_png(const char* filename) {
         rows[height - 1 - y] = image_data.data() + y * rowbytes;
     }
 
+    std::cout << "Image Data Size: " << image_data.size() << " bytes\n";
+
     png_read_image(png, rows.data());
     
     png_destroy_read_struct(&png, &info, nullptr);
